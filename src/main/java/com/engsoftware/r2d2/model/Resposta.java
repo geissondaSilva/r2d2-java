@@ -15,20 +15,20 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="removepergunta")
-@SequenceGenerator(name="REMPER_SEQ", sequenceName="REMOVER_PERGUNTA_SEQ", initialValue=1, allocationSize=1)
-public class RemovePergunta implements Serializable{
-
+@Table(name="resposta")
+@SequenceGenerator(name="RES_SEQ", sequenceName="RESPOSTA_SEQ", initialValue=1, allocationSize=1)
+public class Resposta implements Serializable{
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4106992007892955722L;
+	private static final long serialVersionUID = -1172113785387474188L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private Long id;
 	
-	@Column(nullable=false, name="idpergunta")
+	@Column(name="idpergunta")
 	private Long idPergunta;
 	
 	@Transient
@@ -36,67 +36,66 @@ public class RemovePergunta implements Serializable{
 	@JoinColumn(name="idPergunta", referencedColumnName="id")
 	private Pergunta pergunta;
 	
-	@Column(nullable=false, name="idremover")
-	private Long idRemover;
+	@Column(name="idacoes")
+	private Long idAcoes;
 	
 	@Transient
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="idRemover", referencedColumnName="id")
-	private Remover remover;
+	@JoinColumn(name="idAcoes", referencedColumnName="id")
+	private Acoes acoes;
 	
-																																																													
+	@Column(length=50, nullable=false)
+	private String value;
+	
+	@Column
+	private Integer sequence;
+	
 	private Long getId() {
 		return id;
 	}
-
-
 	private void setId(Long id) {
 		this.id = id;
 	}
-
-
 	private Long getIdPergunta() {
 		return idPergunta;
 	}
-
-
 	private void setIdPergunta(Long idPergunta) {
 		this.idPergunta = idPergunta;
 	}
-
-
 	private Pergunta getPergunta() {
 		return pergunta;
 	}
-
-
 	private void setPergunta(Pergunta pergunta) {
 		this.pergunta = pergunta;
 	}
-
-
-	private Long getIdRemover() {
-		return idRemover;
+	private Long getIdAcao() {
+		return idAcoes;
 	}
-
-
-	private void setIdRemover(Long idRemover) {
-		this.idRemover = idRemover;
+	private void setIdAcao(Long idAcao) {
+		this.idAcoes = idAcao;
 	}
-
-
-	private Remover getRemover() {
-		return remover;
+	private Acoes getAcoes() {
+		return acoes;
 	}
-
-
-	private void setRemover(Remover remover) {
-		this.remover = remover;
+	private void setAcoes(Acoes acoes) {
+		this.acoes = acoes;
 	}
-
-
+	private String getValue() {
+		return value;
+	}
+	private void setValue(String value) {
+		this.value = value;
+	}
+	private Integer getSequence() {
+		return sequence;
+	}
+	private void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 	@Override
 	public String toString() {
-		return "RemovePergunta [id=" + id + ", idPergunta=" + idPergunta + ", idRemover=" + idRemover + "]";
+		return "Resposta [id=" + id + ", idPergunta=" + idPergunta + ", pergunta=" + pergunta + ", idAcao=" + idAcoes
+				+ ", acoes=" + acoes + ", value=" + value + ", sequence=" + sequence + "]";
 	}
+	
 }

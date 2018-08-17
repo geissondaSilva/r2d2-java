@@ -7,11 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="tags")
+@SequenceGenerator(name="TAG_SEQ", sequenceName="TAGS_SEQ", initialValue=1, allocationSize=1)
 public class Tags implements Serializable{
 
 	/**

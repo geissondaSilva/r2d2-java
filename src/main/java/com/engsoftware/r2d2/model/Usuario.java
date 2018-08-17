@@ -1,19 +1,22 @@
 package com.engsoftware.r2d2.model;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-@Table
+@Entity
+@Table(name="usuario")
+@SequenceGenerator(name="USER_SEQ", sequenceName="USUARIO_SEQ", initialValue=1, allocationSize=1)
 public class Usuario implements Serializable{
 
 	/**
@@ -86,8 +89,4 @@ public class Usuario implements Serializable{
 				+ ", dataCadastro=" + dataCadastro + "]";
 	}
 	
-	@PrePersist
-	public void prePersist() {
-		
-	}
 }
