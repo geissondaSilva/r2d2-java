@@ -44,55 +44,77 @@ public class RemovePergunta implements Serializable{
 	@JoinColumn(name="idRemover", referencedColumnName="id")
 	private Remover remover;
 	
-																																																													
-	private Long getId() {
+	
+
+
+	public Long getId() {
 		return id;
 	}
 
 
-	private void setId(Long id) {
+
+
+	public void setId(Long id) {
 		this.id = id;
 	}
 
 
-	private Long getIdPergunta() {
+
+
+	public Long getIdPergunta() {
 		return idPergunta;
 	}
 
 
-	private void setIdPergunta(Long idPergunta) {
+
+
+	public void setIdPergunta(Long idPergunta) {
 		this.idPergunta = idPergunta;
 	}
 
 
-	private Pergunta getPergunta() {
+
+
+	public Pergunta getPergunta() {
 		return pergunta;
 	}
 
 
-	private void setPergunta(Pergunta pergunta) {
+
+
+	public void setPergunta(Pergunta pergunta) {
 		this.pergunta = pergunta;
 	}
 
 
-	private Long getIdRemover() {
+
+
+	public Long getIdRemover() {
 		return idRemover;
 	}
 
 
-	private void setIdRemover(Long idRemover) {
+
+
+	public void setIdRemover(Long idRemover) {
 		this.idRemover = idRemover;
 	}
 
 
-	private Remover getRemover() {
+
+
+	public Remover getRemover() {
 		return remover;
 	}
 
 
-	private void setRemover(Remover remover) {
+
+
+	public void setRemover(Remover remover) {
 		this.remover = remover;
 	}
+
+
 
 
 	@Override

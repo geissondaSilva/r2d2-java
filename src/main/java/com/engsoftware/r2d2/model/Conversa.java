@@ -34,43 +34,67 @@ public class Conversa implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataConversa;
 	
-	@Column(name="idusuario")
-	private Long idUsuario;
+	@Column(name="iddispositivo")
+	private Long idDispositivo;
 	
 	@Transient
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="idUsuario", referencedColumnName="id")
-	private Usuario usuario;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="idDispositivo", referencedColumnName="id")
+	private Dispositivo dispositivo;
 	
-	private Long getId() {
+	public Long getIdDispositivo() {
+		return idDispositivo;
+	}
+
+
+
+	public void setIdDispositivo(Long idDispositivo) {
+		this.idDispositivo = idDispositivo;
+	}
+
+
+
+	public Dispositivo getDispositivo() {
+		return dispositivo;
+	}
+
+
+
+	public void setDispositivo(Dispositivo dispositivo) {
+		this.dispositivo = dispositivo;
+	}
+
+
+
+	public Long getId() {
 		return id;
 	}
-	private void setId(Long id) {
+
+
+
+	public void setId(Long id) {
 		this.id = id;
 	}
-	private Date getDataConversa() {
+
+
+
+	public Date getDataConversa() {
 		return dataConversa;
 	}
-	private void setDataConversa(Date dataConversa) {
+
+
+
+	public void setDataConversa(Date dataConversa) {
 		this.dataConversa = dataConversa;
 	}
-	private Long getIdUsuario() {
-		return idUsuario;
-	}
-	private void setIdUsuario(Long idUsuario) {
-		this.idUsuario = idUsuario;
-	}
-	private Usuario getUsuario() {
-		return usuario;
-	}
-	private void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-	
+
+
+
 	@Override
 	public String toString() {
-		return "Conversa [id=" + id + ", dataConversa=" + dataConversa + ", idUsuario=" + idUsuario + ", usuario="
-				+ usuario + "]";
+		return "Conversa [id=" + id + ", dataConversa=" + dataConversa + ", idDispositivo=" + idDispositivo
+				+ ", dispositivo=" + dispositivo + "]";
 	}
+
 	
 }

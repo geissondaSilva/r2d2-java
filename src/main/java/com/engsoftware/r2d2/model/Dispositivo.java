@@ -4,11 +4,15 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="dispositivo")
@@ -38,6 +42,14 @@ public class Dispositivo implements Serializable{
 	
 	@Column(length=100)
 	private String nome;
+	
+	@Column(name="idUsuario")
+	private Long idUsuario;
+	
+	@Transient
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="idUsuario", referencedColumnName="id")
+	private Usuario usuario;
 	
 	public Long getId() {
 		return id;
@@ -75,10 +87,22 @@ public class Dispositivo implements Serializable{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 	@Override
 	public String toString() {
 		return "Dispositivo [id=" + id + ", serial=" + serial + ", uuid=" + uuid + ", plataforma=" + plataforma
-				+ ", versao=" + versao + ", nome=" + nome + "]";
+				+ ", versao=" + versao + ", nome=" + nome + ", idUsuario=" + idUsuario + ", usuario=" + usuario + "]";
 	}
 	
 }

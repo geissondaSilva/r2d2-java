@@ -50,48 +50,77 @@ public class Resposta implements Serializable{
 	@Column
 	private Integer sequence;
 	
-	private Long getId() {
+	
+	public Long getId() {
 		return id;
 	}
-	private void setId(Long id) {
+
+
+	public void setId(Long id) {
 		this.id = id;
 	}
-	private Long getIdPergunta() {
+
+
+	public Long getIdPergunta() {
 		return idPergunta;
 	}
-	private void setIdPergunta(Long idPergunta) {
+
+
+	public void setIdPergunta(Long idPergunta) {
 		this.idPergunta = idPergunta;
 	}
-	private Pergunta getPergunta() {
+
+
+	public Pergunta getPergunta() {
 		return pergunta;
 	}
-	private void setPergunta(Pergunta pergunta) {
+
+
+	public void setPergunta(Pergunta pergunta) {
 		this.pergunta = pergunta;
 	}
-	private Long getIdAcao() {
+
+
+	public Long getIdAcoes() {
 		return idAcoes;
 	}
-	private void setIdAcao(Long idAcao) {
-		this.idAcoes = idAcao;
+
+
+	public void setIdAcoes(Long idAcoes) {
+		this.idAcoes = idAcoes;
 	}
-	private Acoes getAcoes() {
+
+
+	public Acoes getAcoes() {
 		return acoes;
 	}
-	private void setAcoes(Acoes acoes) {
+
+
+	public void setAcoes(Acoes acoes) {
 		this.acoes = acoes;
 	}
-	private String getValue() {
+
+
+	public String getValue() {
 		return value;
 	}
-	private void setValue(String value) {
+
+
+	public void setValue(String value) {
 		this.value = value;
 	}
-	private Integer getSequence() {
+
+
+	public Integer getSequence() {
 		return sequence;
 	}
-	private void setSequence(Integer sequence) {
+
+
+	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
+
+
 	@Override
 	public String toString() {
 		return "Resposta [id=" + id + ", idPergunta=" + idPergunta + ", pergunta=" + pergunta + ", idAcao=" + idAcoes

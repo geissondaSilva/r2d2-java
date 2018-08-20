@@ -58,54 +58,104 @@ public class Mensagem implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataConversa;
 	
-	private Long getId() {
+	
+	
+	public Long getId() {
 		return id;
 	}
-	private void setId(Long id) {
+
+
+
+	public void setId(Long id) {
 		this.id = id;
 	}
-	private Long getIdConversa() {
+
+
+
+	public Long getIdConversa() {
 		return idConversa;
 	}
-	private void setIdConversa(Long idConversa) {
+
+
+
+	public void setIdConversa(Long idConversa) {
 		this.idConversa = idConversa;
 	}
-	private Conversa getConversa() {
+
+
+
+	public Conversa getConversa() {
 		return conversa;
 	}
-	private void setConversa(Conversa conversa) {
+
+
+
+	public void setConversa(Conversa conversa) {
 		this.conversa = conversa;
 	}
-	private Long getIdResposta() {
+
+
+
+	public Long getIdResposta() {
 		return idResposta;
 	}
-	private void setIdResposta(Long idResposta) {
+
+
+
+	public void setIdResposta(Long idResposta) {
 		this.idResposta = idResposta;
 	}
-	private Resposta getResposta() {
+
+
+
+	public Resposta getResposta() {
 		return resposta;
 	}
-	private void setResposta(Resposta resposta) {
+
+
+
+	public void setResposta(Resposta resposta) {
 		this.resposta = resposta;
 	}
-	private String getRes() {
+
+
+
+	public String getRes() {
 		return res;
 	}
-	private void setRes(String res) {
+
+
+
+	public void setRes(String res) {
 		this.res = res;
 	}
-	private String getTipo() {
+
+
+
+	public String getTipo() {
 		return tipo;
 	}
-	private void setTipo(String tipo) {
+
+
+
+	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	private Date getDataConversa() {
+
+
+
+	public Date getDataConversa() {
 		return dataConversa;
 	}
-	private void setDataConversa(Date dataConversa) {
+
+
+
+	public void setDataConversa(Date dataConversa) {
 		this.dataConversa = dataConversa;
 	}
+
+
+
 	@Override
 	public String toString() {
 		return "Mensagem [id=" + id + ", idConversa=" + idConversa + ", conversa=" + conversa + ", idResposta="

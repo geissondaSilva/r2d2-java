@@ -41,40 +41,56 @@ public class PerguntaTag implements Serializable{
 	private Pergunta pergunta;
 																																																																
 	
-	
-	
-	
-	
-	private Long getId() {
+	public Long getId() {
 		return id;
 	}
-	private void setId(Long id) {
+
+
+	public void setId(Long id) {
 		this.id = id;
 	}
-	private Long getIdTag() {
+
+
+	public Long getIdTag() {
 		return idTag;
 	}
-	private void setIdTag(Long idTag) {
+
+
+	public void setIdTag(Long idTag) {
 		this.idTag = idTag;
 	}
-	private Tags getTag() {
+
+
+	public Tags getTag() {
 		return tag;
 	}
-	private void setTag(Tags tag) {
+
+
+	public void setTag(Tags tag) {
 		this.tag = tag;
 	}
-	private Long getIdPergunta() {
+
+
+	public Long getIdPergunta() {
 		return idPergunta;
 	}
-	private void setIdPergunta(Long idPergunta) {
+
+
+	public void setIdPergunta(Long idPergunta) {
 		this.idPergunta = idPergunta;
 	}
-	private Pergunta getPergunta() {
+
+
+	public Pergunta getPergunta() {
 		return pergunta;
 	}
-	private void setPergunta(Pergunta pergunta) {
+
+
+	public void setPergunta(Pergunta pergunta) {
 		this.pergunta = pergunta;
 	}
+
+
 	@Override
 	public String toString() {
 		return "PerguntaTag [id=" + id + ", idTag=" + idTag + ", tag=" + tag + ", idPergunta=" + idPergunta
