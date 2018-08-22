@@ -2,6 +2,7 @@ package com.engsoftware.r2d2.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -42,6 +44,21 @@ public class Conversa implements Serializable{
 	@JoinColumn(name="idDispositivo", referencedColumnName="id")
 	private Dispositivo dispositivo;
 	
+	@Transient
+	private List<Pergunta> perguntas;
+	
+	public List<Pergunta> getPerguntas() {
+		return perguntas;
+	}
+
+
+
+	public void setPerguntas(List<Pergunta> perguntas) {
+		this.perguntas = perguntas;
+	}
+
+
+
 	public Long getIdDispositivo() {
 		return idDispositivo;
 	}
@@ -94,6 +111,11 @@ public class Conversa implements Serializable{
 	public String toString() {
 		return "Conversa [id=" + id + ", dataConversa=" + dataConversa + ", idDispositivo=" + idDispositivo
 				+ ", dispositivo=" + dispositivo + "]";
+	}
+	
+	@PrePersist()
+	public void prePersist() {
+		this.dataConversa = new Date();
 	}
 
 	

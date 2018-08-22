@@ -1,6 +1,7 @@
 package com.engsoftware.r2d2.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -36,6 +39,12 @@ public class Pergunta implements Serializable{
 	@Column
 	private Integer sequence;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataUtilizacao;
+	
+	@Column(length=30)
+	private String assunto;
+	
 	public Long getId() {
 		return id;
 	}
@@ -60,9 +69,25 @@ public class Pergunta implements Serializable{
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
+	public Date getDataUtilizacao() {
+		return dataUtilizacao;
+	}
+	public void setDataUtilizacao(Date dataUtilizacao) {
+		this.dataUtilizacao = dataUtilizacao;
+	}
+	
+	public String getAssunto() {
+		return assunto;
+	}
+	public void setAssunto(String assunto) {
+		this.assunto = assunto;
+	}
 	@Override
 	public String toString() {
-		return "Pergunta [id=" + id + ", pergunta=" + pergunta + ", tipo=" + tipo + ", sequence=" + sequence + "]";
+		return "Pergunta [id=" + id + ", pergunta=" + pergunta + ", tipo=" + tipo + ", sequence=" + sequence
+				+ ", dataUtilizacao=" + dataUtilizacao + ", assunto=" + assunto + "]";
 	}
+	
+	
 	
 }

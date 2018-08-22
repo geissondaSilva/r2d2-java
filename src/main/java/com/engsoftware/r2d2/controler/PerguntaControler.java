@@ -1,6 +1,5 @@
 package com.engsoftware.r2d2.controler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +12,8 @@ import com.engsoftware.r2d2.repository.PerguntaRepository;
 @RequestMapping("api/r2d2/pergunta")
 public class PerguntaControler {
 	
-	@Autowired
-	PerguntaRepository perguntaRepository;
+	
+	private PerguntaRepository perguntaRepository;
 	
 	@PostMapping
 	public Pergunta save(@RequestBody Pergunta pergunta) {
