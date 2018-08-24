@@ -7,18 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="DicionarioPalavrao")
-@SequenceGenerator(name="DIS_DIC_PAL", sequenceName="DICIONARIO_PALAVRAO_SEQ", initialValue=1, allocationSize=1)
-public class DicionarioPalavrao implements Serializable{
+@Table(name="dicionario_pergunta")
+public class DicionarioPergunta implements Serializable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7978114283498533624L;
+	private static final long serialVersionUID = 2221197585002043376L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
@@ -26,11 +24,11 @@ public class DicionarioPalavrao implements Serializable{
 	
 	private Boolean deletado;
 	
-	@Column(length=50, nullable=false, name="nome")
-	private String nome;
-	
 	@Column(length=50)
 	private String value;
+	
+	@Column(length=50)
+	private String nome;
 	
 	private Integer nivel;
 	
@@ -46,21 +44,17 @@ public class DicionarioPalavrao implements Serializable{
 	public void setDeletado(Boolean deletado) {
 		this.deletado = deletado;
 	}
-	public String getName() {
-		return nome;
-	}
-	public void setName(String name) {
-		this.nome = name;
-	}
 	public String getValue() {
 		return value;
 	}
 	public void setValue(String value) {
 		this.value = value;
 	}
-	@Override
-	public String toString() {
-		return "DicionarioPalavrao [id=" + id + ", deletado=" + deletado + ", nome=" + nome + ", value=" + value + "]";
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 	public Integer getNivel() {
 		return nivel;
@@ -68,6 +62,5 @@ public class DicionarioPalavrao implements Serializable{
 	public void setNivel(Integer nivel) {
 		this.nivel = nivel;
 	}
-	
 
 }

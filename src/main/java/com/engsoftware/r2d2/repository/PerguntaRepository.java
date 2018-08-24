@@ -11,4 +11,7 @@ public interface PerguntaRepository extends JpaRepository<Pergunta, Long>{
 	
 	@Query("select p from Pergunta p where p.tipo = :tipo order by p.sequence")
 	public List<Pergunta> buscarPerguntaPorTipo(@Param("tipo") String tipo);
+	
+	@Query("select p from Pergunta p where p.tipo = :tipo and p.assunto = :assunto order by p.sequence")
+	public List<Pergunta> buscarPorTipoAssunto(@Param("tipo") String tipo, @Param("assunto") String assunto);
 }
