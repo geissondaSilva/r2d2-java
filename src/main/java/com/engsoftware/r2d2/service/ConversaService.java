@@ -37,6 +37,7 @@ public class ConversaService {
 		
 		//buscar mensagens
 		List<Pergunta> perguntas = new ArrayList<>();
+		List<Mensagem> mensagens = new ArrayList<>();
 		
 		try {
 			perguntas = perguntaRepository.buscarPerguntaPorTipo(tipo);
@@ -53,13 +54,14 @@ public class ConversaService {
 			msg.setTipo("boot");
 			try {				
 				msg = mensagemRepository.save(msg);
+				mensagens.add(msg);
 			}catch (Exception e) {
 				e.printStackTrace();
 				throw new Exception("Não foi possivel gravar as perguntas na tabela mensagem");
 			}
 		}
 		
-		conversa.setPerguntas(perguntas);
+		conversa.setMensagens(mensagens);
 		return conversa;
 	}
 }

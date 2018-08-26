@@ -45,17 +45,9 @@ public class Conversa implements Serializable{
 	private Dispositivo dispositivo;
 	
 	@Transient
-	private List<Pergunta> perguntas;
+	private List<Mensagem> mensagens;
 	
-	public List<Pergunta> getPerguntas() {
-		return perguntas;
-	}
 
-
-
-	public void setPerguntas(List<Pergunta> perguntas) {
-		this.perguntas = perguntas;
-	}
 
 
 
@@ -116,6 +108,18 @@ public class Conversa implements Serializable{
 	@PrePersist()
 	public void prePersist() {
 		this.dataConversa = new Date();
+	}
+
+
+
+	public List<Mensagem> getMensagens() {
+		return mensagens;
+	}
+
+
+
+	public void setMensagens(List<Mensagem> mensagens) {
+		this.mensagens = mensagens;
 	}
 
 	
