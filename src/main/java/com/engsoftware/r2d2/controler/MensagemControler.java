@@ -20,10 +20,10 @@ public class MensagemControler {
 	@Autowired
 	private MensagemService mensagemService;
 	
-	@PostMapping("novamensagem/{idconversa}")
-	public List<Mensagem> novaMensagem(@RequestBody Mensagem msg, @PathParam("idconversa") Long idConversa){
+	@PostMapping("novamensagem/{idpergunta}")
+	public List<Mensagem> novaMensagem(@RequestBody Mensagem msg, @PathParam("idpergunta") Long idPergunta){
 		try {
-			return mensagemService.novaMensagem(msg, null, idConversa);
+			return mensagemService.novaMensagem(msg, idPergunta);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

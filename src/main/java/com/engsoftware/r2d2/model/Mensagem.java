@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -161,6 +162,11 @@ public class Mensagem implements Serializable{
 		return "Mensagem [id=" + id + ", idConversa=" + idConversa + ", conversa=" + conversa + ", idResposta="
 				+ idResposta + ", resposta=" + resposta + ", res=" + res + ", tipo=" + tipo + ", dataConversa="
 				+ dataConversa + "]";
+	}
+	
+	@PrePersist()
+	public void prePersist() {
+		this.dataConversa = new Date();
 	}
 	
 }

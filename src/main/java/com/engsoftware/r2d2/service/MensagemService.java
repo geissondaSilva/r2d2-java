@@ -38,28 +38,29 @@ public class MensagemService {
 	@Autowired
 	DialogoRepository dialogoRepository;
 	
-	public List<Mensagem> novaMensagem(Mensagem mensagem, Long idPergunta, Long idConversa) throws Exception{
-		mensagem.setIdConversa(idConversa);
+	public List<Mensagem> novaMensagem(Mensagem mensagem, Long idPergunta) throws Exception{
 		mensagemRepository.save(mensagem);
 		
 		List<Mensagem> mensagens = new ArrayList<>();
 		Mensagem msg = filtrarPalavrao(mensagem.getRes());
 		if(msg != null) {
 			mensagens.add(msg);
-			return gravaMensagens(mensagens, idConversa);
+			return gravaMensagens(mensagens);
 		}
 		
-		if(idPergunta != null) {
-			return novoDialogo(idConversa);
+		if(idPergunta != 0) {
+			return novoDialogo(mensagem.getIdConversa());
 		}
 		
 		msg = filtrarPergunta(msg);
 		return mensagens;
 	}
 	
-	public List<Mensagem> gravaMensagens(List<Mensagem> msg, Long idConversa) throws Exception {
-		
-		return msg;
+	public List<Mensagem> gravaMensagens(List<Mensagem> msgs) throws Exception {
+		for(Mensagem msg : msgs) {			
+			msg = mensagemRepository.save(msg);
+		}
+		return msgs;
 	}
 	
 	public Mensagem filtrarPalavrao(String frase){
