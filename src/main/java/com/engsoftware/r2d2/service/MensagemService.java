@@ -1,5 +1,7 @@
 package com.engsoftware.r2d2.service;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.engsoftware.r2d2.model.Dialogo;
 import com.engsoftware.r2d2.model.DicionarioPalavrao;
+import com.engsoftware.r2d2.model.DicionarioPergunta;
 import com.engsoftware.r2d2.model.Mensagem;
 import com.engsoftware.r2d2.repository.DialogoRepository;
 import com.engsoftware.r2d2.repository.DicionarioPalaraoRepository;
+import com.engsoftware.r2d2.repository.DicionarioPerguntaRepository;
 import com.engsoftware.r2d2.repository.MensagemRepostory;
 import com.engsoftware.r2d2.repository.PerguntaRepository;
 
@@ -26,16 +30,36 @@ public class MensagemService {
 	DicionarioPalaraoRepository dicionarioPalavraoRepository;
 	
 	@Autowired
+	DicionarioPerguntaRepository dicionarioPerguntaRepository;
+	
+	@Autowired
 	PerguntaRepository perguntaRepository;
 	
 	@Autowired
 	DialogoRepository dialogoRepository;
 	
-	public List<Mensagem> novaMensagem(Mensagem mensagem) throws Exception{
-		Mensagem msg = filtrarPalavrao(mensagem.getRes());
+	public List<Mensagem> novaMensagem(Mensagem mensagem, Long idPergunta, Long idConversa) throws Exception{
+		mensagem.setIdConversa(idConversa);
+		mensagemRepository.save(mensagem);
+		
 		List<Mensagem> mensagens = new ArrayList<>();
-		mensagens.add(msg);
+		Mensagem msg = filtrarPalavrao(mensagem.getRes());
+		if(msg != null) {
+			mensagens.add(msg);
+			return gravaMensagens(mensagens, idConversa);
+		}
+		
+		if(idPergunta != null) {
+			return novoDialogo(idConversa);
+		}
+		
+		msg = filtrarPergunta(msg);
 		return mensagens;
+	}
+	
+	public List<Mensagem> gravaMensagens(List<Mensagem> msg, Long idConversa) throws Exception {
+		
+		return msg;
 	}
 	
 	public Mensagem filtrarPalavrao(String frase){
@@ -90,6 +114,12 @@ public class MensagemService {
 		return null;
 	}
 	
+	public Mensagem filtrarPergunta(Mensagem msg) throws Exception{
+		List<DicionarioPergunta> dicionario = dicionarioPerguntaRepository.findAll();
+		
+		return null;
+	}
+	
 	public List<String> separarPalavra(String frase){
 		String[] lista;
 		frase = removeAcentos(frase);
@@ -108,6 +138,10 @@ public class MensagemService {
 	
 	public Mensagem vereficarPergunta(String msg) {
 		List<String> palavras = separarPalavra(msg);
+		return null;
+	}
+	
+	public List<Mensagem> novoDialogo(Long idConversa){
 		return null;
 	}
 }
