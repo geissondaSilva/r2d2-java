@@ -4,9 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -31,6 +34,13 @@ public class Tags implements Serializable{
 	
 	@Column(length=200)
 	private String descricao;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="idpergunta", referencedColumnName="id", insertable=false, updatable=false)
+	private Pergunta pergunta;
+	
+	@Column(name="idpergunta")
+	private Long idPergunta;
 	
 	public Long getId() {
 		return id;

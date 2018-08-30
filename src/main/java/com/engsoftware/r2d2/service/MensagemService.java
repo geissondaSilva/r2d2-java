@@ -1,7 +1,5 @@
 package com.engsoftware.r2d2.service;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +17,7 @@ import com.engsoftware.r2d2.repository.DicionarioPalaraoRepository;
 import com.engsoftware.r2d2.repository.DicionarioPerguntaRepository;
 import com.engsoftware.r2d2.repository.MensagemRepostory;
 import com.engsoftware.r2d2.repository.PerguntaRepository;
+import com.engsoftware.r2d2.repository.TagsRepository;
 
 @Service
 public class MensagemService {
@@ -38,6 +37,9 @@ public class MensagemService {
 	@Autowired
 	DialogoRepository dialogoRepository;
 	
+	@Autowired
+	TagsRepository tagRepository;
+	
 	public List<Mensagem> novaMensagem(Mensagem mensagem, Long idPergunta) throws Exception{
 		mensagemRepository.save(mensagem);
 		
@@ -48,12 +50,18 @@ public class MensagemService {
 			return gravaMensagens(mensagens);
 		}
 		
+		msg = filtrarPergunta(mensagem);
+		
+		if(msg != null) {
+			mensagens.add(msg);
+			return gravaMensagens(mensagens);
+		}
+		
 		if(idPergunta != 0) {
 			return novoDialogo(mensagem.getIdConversa());
 		}
 		
-		msg = filtrarPergunta(msg);
-		return mensagens;
+		return naoEntendeu();
 	}
 	
 	public List<Mensagem> gravaMensagens(List<Mensagem> msgs) throws Exception {
@@ -61,6 +69,10 @@ public class MensagemService {
 			msg = mensagemRepository.save(msg);
 		}
 		return msgs;
+	}
+	
+	public List<Mensagem> naoEntendeu() {
+		return null;
 	}
 	
 	public Mensagem filtrarPalavrao(String frase){
@@ -117,7 +129,24 @@ public class MensagemService {
 	
 	public Mensagem filtrarPergunta(Mensagem msg) throws Exception{
 		List<DicionarioPergunta> dicionario = dicionarioPerguntaRepository.findAll();
+		String frase = msg.getRes();
+		List<String> palavras = separarPalavra(frase);
+		int nivel = 0;
+		for(DicionarioPergunta dic : dicionario) {
+			for(String palavra : palavras) {
+				if(palavra.equals(dic.getValue())) {
+					nivel += dic.getNivel();
+				}
+			}
+		}
 		
+		if(nivel >= 5) {
+			return buscarRespostaPergunta(msg.getIdConversa());
+		}
+		return null;
+	}
+	
+	public Mensagem buscarRespostaPergunta(Long idConversa) {
 		return null;
 	}
 	
@@ -137,10 +166,6 @@ public class MensagemService {
 	    return Normalizer.normalize(a, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 	
-	public Mensagem vereficarPergunta(String msg) {
-		List<String> palavras = separarPalavra(msg);
-		return null;
-	}
 	
 	public List<Mensagem> novoDialogo(Long idConversa){
 		return null;
