@@ -45,6 +45,8 @@ public class Pergunta implements Serializable{
 	@Column(length=30)
 	private String assunto;
 	
+	private Integer qtdTags;
+	
 	public Long getId() {
 		return id;
 	}
@@ -81,6 +83,12 @@ public class Pergunta implements Serializable{
 	}
 	public void setAssunto(String assunto) {
 		this.assunto = assunto;
+	}
+	public Integer getQtdTags() {
+		return qtdTags;
+	}
+	public void setQtdTags(Integer qtdTags) {
+		this.qtdTags = qtdTags;
 	}
 	@Override
 	public String toString() {

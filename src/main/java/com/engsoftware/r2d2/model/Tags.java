@@ -42,6 +42,37 @@ public class Tags implements Serializable{
 	@Column(name="idpergunta")
 	private Long idPergunta;
 	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="idfuncionalidade", referencedColumnName="id", insertable=false, updatable=false)
+	private Funcionalidade funcionalidade;
+	
+	@Column(name="idfuncionalidade")
+	private Long idFuncionalidade;
+	
+	public Funcionalidade getFuncionalidade() {
+		return funcionalidade;
+	}
+	public void setFuncionalidade(Funcionalidade funcionalidade) {
+		this.funcionalidade = funcionalidade;
+	}
+	public Long getIdFuncionalidade() {
+		return idFuncionalidade;
+	}
+	public void setIdFuncionalidade(Long idFuncionalidade) {
+		this.idFuncionalidade = idFuncionalidade;
+	}
+	public Pergunta getPergunta() {
+		return pergunta;
+	}
+	public void setPergunta(Pergunta pergunta) {
+		this.pergunta = pergunta;
+	}
+	public Long getIdPergunta() {
+		return idPergunta;
+	}
+	public void setIdPergunta(Long idPergunta) {
+		this.idPergunta = idPergunta;
+	}
 	public Long getId() {
 		return id;
 	}
