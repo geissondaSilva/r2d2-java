@@ -76,11 +76,20 @@ public class MensagemService {
 			return gravaMensagens(mensagens);
 		}
 		
-		if(idPergunta != 0) {
+		msg = filtrarFuncionalidade(mensagem);
+		if(msg != null) {
+			mensagens.add(msg);
+			return gravaMensagens(mensagens);
+		}
+		
+		if(idPergunta != null) {
+			if(idPergunta == 0) {
+				return naoEntendeu(mensagem);
+			}
 			return novoDialogo(mensagem.getIdConversa());
 		}
 		
-		return naoEntendeu();
+		return naoEntendeu(mensagem);
 	}
 	
 	public List<Mensagem> gravaMensagens(List<Mensagem> msgs) throws Exception {
@@ -94,8 +103,14 @@ public class MensagemService {
 		return mensagemRepository.save(msg);
 	}
 	
-	public List<Mensagem> naoEntendeu() {
-		return null;
+	public List<Mensagem> naoEntendeu(Mensagem msg) throws Exception{
+		Mensagem mensagem = new Mensagem();
+		mensagem.setRes("Desculpe, mas não entendi o que você quiz dizer");
+		mensagem.setIdConversa(msg.getIdConversa());
+		mensagem.setTipo("boot");
+		List<Mensagem> lista = new ArrayList<>();
+		lista.add(mensagem);
+		return gravaMensagens(lista);
 	}
 	
 	public Mensagem filtrarPalavrao(String frase){
@@ -166,6 +181,12 @@ public class MensagemService {
 		if(nivel >= 5) {
 			return buscarRespostaPergunta(msg.getIdConversa(), msg);
 		}
+		
+		if(msg.getRes().contains("?")) {
+			String a = msg.getRes().replace("?", "");
+			msg.setRes(a);
+			return buscarRespostaPergunta(msg.getIdConversa(), msg);
+		}
 		return null;
 	}
 	
@@ -187,6 +208,9 @@ public class MensagemService {
 		for(PerguntaTagsResult p : lista) {
 			if(p.getQtdTags() == p.getTags().size()) {
 				Resposta resposta = respostaRepository.buscarPorPergunta(p.getId());
+				if(resposta == null) {
+					return semResposta();
+				}
 				Mensagem mensagem = new Mensagem();
 				mensagem.setIdConversa(idConversa);
 				mensagem.setIdResposta(resposta.getId());
@@ -211,7 +235,7 @@ public class MensagemService {
 		return nova;
 	}
 	
-	public Mensagem filtrarTag(Mensagem msg) {
+	public Mensagem filtrarFuncionalidade(Mensagem msg) {
 		List<String> palavras = separarPalavra(msg.getRes());
 		
 		String cond = "";
@@ -223,17 +247,51 @@ public class MensagemService {
 			cond += "'" + palavras.get(i) + "', ";
 		}
 		
-		String sql = "select t from Tags t where t.idfuncionalidade is not null and t.nome in (" + cond + ")";
+		String sql = "select t from Tags t where t.idFuncionalidade is not null and t.nome in (" + cond + ")";
 		Query query = entity.createQuery(sql);
 		List<Tags> tags = query.getResultList();
 		
 		List<FuncionalidadeTagResult> lista = montarFuncionalidadeResult(tags);
+		
+		for(FuncionalidadeTagResult fun : lista) {
+			if(fun.getQtdTags() == fun.getTags().size() + 1) {
+				Mensagem mensg = new Mensagem();
+				mensg.setIdConversa(msg.getIdConversa());
+				mensg.setRes(fun.getAcao().getNome());
+				mensg.setTipo("acao");
+				return mensg;
+			}
+		}
+		
 		return null;
 	}
 	
 	private List<FuncionalidadeTagResult> montarFuncionalidadeResult(List<Tags> tags) {
-		List<Funcionalidade> lista = new ArrayList<>();
-		return null;
+		List<FuncionalidadeTagResult> lista = new ArrayList<>();
+		for(Tags t : tags) {
+			Boolean existe = false;
+			for(FuncionalidadeTagResult fun : lista) {
+				if(fun.getId() == t.getIdFuncionalidade()) {
+					List<Tags> list = fun.getTags();
+					list.add(t);
+					fun.setTags(list);
+					existe = true;
+				}
+			}
+			
+			if(!existe) {
+				FuncionalidadeTagResult fun = new FuncionalidadeTagResult();
+				fun.setId(t.getIdFuncionalidade());
+				fun.setNome(t.getFuncionalidade().getNome());
+				fun.setIdAcao(t.getFuncionalidade().getIdAcao());
+				fun.setQtdTags(t.getFuncionalidade().getQtdTags());
+				List<Tags> list = new ArrayList<>();
+				list.add(t);
+				fun.setTags(list);
+				lista.add(fun);
+			}
+		}
+		return lista;
 	}
 
 	public String removeAcentos(String a) {
@@ -241,8 +299,31 @@ public class MensagemService {
 	}
 	
 	
-	public List<Mensagem> novoDialogo(Long idConversa){
-		return null;
+	public List<Mensagem> novoDialogo(Long idConversa) throws Exception{
+		List<Dialogo> lista = dialogoRepository.buscarUltimosPorTipo("novodialogo");
+		List<Mensagem> msgs = new ArrayList<>();
+		if(lista == null) {
+			msgs.add(semResposta());
+			return msgs;
+		}else if(lista.size() == 0) {
+			msgs.add(semResposta());
+			return msgs;
+		}
+		Dialogo dialogo = updateDialogo(lista.get(0));
+		Mensagem msg = new Mensagem();
+		msg.setIdConversa(idConversa);
+		msg.setRes(dialogo.getMensagem());
+		msg.setTipo("boot");
+		msgs.add(msg);
+		return gravaMensagens(msgs);
+	}
+	
+	public Dialogo updateDialogo(Dialogo dialogo) throws Exception{
+		String sql = "update dialogo set data_utilizacao = current_timestamp where id = :id";
+		Query query = entity.createNativeQuery(sql);
+		query.setParameter("id", dialogo.getId());
+		query.executeUpdate();
+		return dialogo;
 	}
 	
 	public List<PerguntaTagsResult> montarPerguntaResulta(List<Tags> tags){
@@ -280,5 +361,24 @@ public class MensagemService {
 		msg.setRes("Desculpe minha ignorancia, mas eu estou sem resposta!");
 		msg.setTipo("boot");
 		return gravaMensagem(msg);
+	}
+	
+	public List<Mensagem> erroMensagem(Mensagem msg) throws Exception{
+		if(msg.getId() == null) {
+			gravaMensagem(msg);
+		}
+		List<Mensagem> lista = new ArrayList<>();
+		lista.add(semResposta());
+		lista.add(novoDialogo(msg.getIdConversa()).get(0));
+		return lista;
+	}
+	
+	public List<Mensagem> relatarProblema(){
+		List<Mensagem> lista = new ArrayList<>();
+		Mensagem msg = new Mensagem();
+		msg.setRes("Desculpe, mas temporariamente estamos com problema");
+		msg.setTipo("boot");
+		lista.add(msg);
+		return lista;
 	}
 }

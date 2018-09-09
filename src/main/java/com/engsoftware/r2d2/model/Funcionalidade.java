@@ -38,6 +38,8 @@ public class Funcionalidade implements Serializable{
 	@Column(name="idacao")
 	private Long idAcao;
 	
+	private Integer qtdTags;
+	
 	public Long getId() {
 		return id;
 	}
@@ -67,5 +69,11 @@ public class Funcionalidade implements Serializable{
 	}
 	public void setIdAcao(Long idAcao) {
 		this.idAcao = idAcao;
+	}
+	public Integer getQtdTags() {
+		return qtdTags;
+	}
+	public void setQtdTags(Integer qtdTags) {
+		this.qtdTags = qtdTags;
 	}
 }

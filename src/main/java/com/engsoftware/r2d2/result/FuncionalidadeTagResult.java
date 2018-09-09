@@ -12,6 +12,7 @@ public class FuncionalidadeTagResult {
 	private List<Tags> tags;
 	private Long idAcao;
 	private Acoes acao;
+	private Integer qtdTags;
 	
 	public Long getId() {
 		return id;
@@ -42,6 +43,12 @@ public class FuncionalidadeTagResult {
 	}
 	public void setAcao(Acoes acao) {
 		this.acao = acao;
+	}
+	public Integer getQtdTags() {
+		return qtdTags;
+	}
+	public void setQtdTags(Integer qtdTags) {
+		this.qtdTags = qtdTags;
 	}
 	
 	

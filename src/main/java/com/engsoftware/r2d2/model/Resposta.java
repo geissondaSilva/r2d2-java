@@ -44,7 +44,7 @@ public class Resposta implements Serializable{
 	@JoinColumn(name="idAcoes", referencedColumnName="id")
 	private Acoes acoes;
 	
-	@Column(length=50, nullable=false)
+	@Column(length=500, nullable=false)
 	private String value;
 	
 	@Column
