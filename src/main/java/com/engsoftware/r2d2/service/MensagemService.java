@@ -1,7 +1,5 @@
 package com.engsoftware.r2d2.service;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,14 +12,14 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.engsoftware.r2d2.model.Acoes;
 import com.engsoftware.r2d2.model.Dialogo;
 import com.engsoftware.r2d2.model.DicionarioPalavrao;
 import com.engsoftware.r2d2.model.DicionarioPergunta;
-import com.engsoftware.r2d2.model.Funcionalidade;
 import com.engsoftware.r2d2.model.Mensagem;
-import com.engsoftware.r2d2.model.Pergunta;
 import com.engsoftware.r2d2.model.Resposta;
 import com.engsoftware.r2d2.model.Tags;
+import com.engsoftware.r2d2.repository.AcaoRepository;
 import com.engsoftware.r2d2.repository.DialogoRepository;
 import com.engsoftware.r2d2.repository.DicionarioPalaraoRepository;
 import com.engsoftware.r2d2.repository.DicionarioPerguntaRepository;
@@ -55,6 +53,9 @@ public class MensagemService {
 	
 	@Autowired
 	RespostaRepository respostaRepository;
+	
+	@Autowired
+	AcaoRepository acaoRepository;
 	
 	@PersistenceContext
 	private EntityManager entity;
@@ -254,10 +255,14 @@ public class MensagemService {
 		List<FuncionalidadeTagResult> lista = montarFuncionalidadeResult(tags);
 		
 		for(FuncionalidadeTagResult fun : lista) {
-			if(fun.getQtdTags() == fun.getTags().size() + 1) {
+			if(fun.getQtdTags() == fun.getTags().size()) {
 				Mensagem mensg = new Mensagem();
 				mensg.setIdConversa(msg.getIdConversa());
-				mensg.setRes(fun.getAcao().getNome());
+				if(fun.getAcao() == null) {
+					Acoes acao = acaoRepository.getOne(fun.getIdAcao());
+					fun.setAcao(acao);
+				}
+				mensg.setRes(fun.getAcao().getValue());
 				mensg.setTipo("acao");
 				return mensg;
 			}
