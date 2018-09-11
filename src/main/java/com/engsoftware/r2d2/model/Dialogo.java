@@ -39,6 +39,12 @@ public class Dialogo implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataUtilizacao;
 	
+	public Date getDataUtilizacao() {
+		return dataUtilizacao;
+	}
+	public void setDataUtilizacao(Date dataUtilizacao) {
+		this.dataUtilizacao = dataUtilizacao;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -68,11 +74,6 @@ public class Dialogo implements Serializable{
 	}
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
-	}
-	@Override
-	public String toString() {
-		return "Dialogo [id=" + id + ", mensagem=" + mensagem + ", tipo=" + tipo + ", name=" + name + ", sequence="
-				+ sequence + "]";
 	}
 	
 }

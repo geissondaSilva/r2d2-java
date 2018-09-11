@@ -64,7 +64,7 @@ public class MensagemService {
 		mensagemRepository.save(mensagem);
 		
 		List<Mensagem> mensagens = new ArrayList<>();
-		Mensagem msg = filtrarPalavrao(mensagem.getRes());
+		Mensagem msg = filtrarPalavrao(mensagem.getRes(), mensagem);
 		if(msg != null) {
 			mensagens.add(msg);
 			return gravaMensagens(mensagens);
@@ -114,7 +114,7 @@ public class MensagemService {
 		return gravaMensagens(lista);
 	}
 	
-	public Mensagem filtrarPalavrao(String frase){
+	public Mensagem filtrarPalavrao(String frase, Mensagem mensg){
 		List<DicionarioPalavrao> palavroes = new ArrayList<>();
 		try {
 			palavroes = dicionarioPalavraoRepository.findAll();
@@ -159,6 +159,7 @@ public class MensagemService {
 			Mensagem msg = new Mensagem();
 			msg.setDataConversa(new Date());
 			msg.setRes(dialogo.getMensagem());
+			msg.setIdConversa(mensg.getIdConversa());
 
 			msg.setTipo("boot");
 			return msg;
@@ -324,11 +325,8 @@ public class MensagemService {
 	}
 	
 	public Dialogo updateDialogo(Dialogo dialogo) throws Exception{
-		String sql = "update dialogo set data_utilizacao = current_timestamp where id = :id";
-		Query query = entity.createNativeQuery(sql);
-		query.setParameter("id", dialogo.getId());
-		query.executeUpdate();
-		return dialogo;
+		dialogo.setDataUtilizacao(new Date());
+		return dialogoRepository.save(dialogo);
 	}
 	
 	public List<PerguntaTagsResult> montarPerguntaResulta(List<Tags> tags){
