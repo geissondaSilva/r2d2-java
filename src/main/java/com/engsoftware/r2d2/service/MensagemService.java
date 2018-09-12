@@ -4,6 +4,7 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -211,7 +212,7 @@ public class MensagemService {
 			if(p.getQtdTags() == p.getTags().size()) {
 				Resposta resposta = respostaRepository.buscarPorPergunta(p.getId());
 				if(resposta == null) {
-					return semResposta();
+					return semResposta(idConversa);
 				}
 				Mensagem mensagem = new Mensagem();
 				mensagem.setIdConversa(idConversa);
@@ -222,7 +223,7 @@ public class MensagemService {
 				return gravaMensagem(mensagem);
 			}
 		}		
-		return semResposta();
+		return semResposta(idConversa);
 	}
 	
 	public List<String> separarPalavra(String frase){
@@ -306,24 +307,72 @@ public class MensagemService {
 	
 	
 	public List<Mensagem> novoDialogo(Long idConversa) throws Exception{
-		List<Dialogo> lista = dialogoRepository.buscarUltimosPorTipo("novodialogo");
+		List<Dialogo> lista = new ArrayList<>();
+		List<Mensagem> usadas = mensagemRepository.buscarPorNomeConversa("novodialogo", idConversa);
+		String cond = montarCondRes(usadas);
 		List<Mensagem> msgs = new ArrayList<>();
-		if(lista == null) {
-			msgs.add(semResposta());
-			return msgs;
-		}else if(lista.size() == 0) {
-			msgs.add(semResposta());
-			return msgs;
+		if(cond.equals("")) {
+			lista = dialogoRepository.buscarUltimosPorTipo("novodialogo");
+		}else {
+			String sql = "select d from Dialogo d where d.tipo = :tipo and d.mensagem not in ( " + cond + " )";
+			Query query = entity.createQuery(sql);
+			query.setParameter("tipo", "novodialogo");
+			lista = query.getResultList();
 		}
-		Dialogo dialogo = updateDialogo(lista.get(0));
+		if(lista == null) {
+			return gravaMensagens(semDialogo(idConversa));
+		}else if(lista.size() == 0) {
+			return gravaMensagens(semDialogo(idConversa));
+		}
+		Dialogo dialogo = updateDialogo(sortearDialogo(lista));
 		Mensagem msg = new Mensagem();
 		msg.setIdConversa(idConversa);
 		msg.setRes(dialogo.getMensagem());
 		msg.setTipo("boot");
+		msg.setName("novodialogo");
 		msgs.add(msg);
 		return gravaMensagens(msgs);
 	}
 	
+	public List<Mensagem> semDialogo(Long id){
+		List<Mensagem> lista = new ArrayList<>();
+		Mensagem msg = new Mensagem();
+		msg.setIdConversa(id);
+		msg.setRes("No que posso ser útil");
+		msg.setName("ajuda");
+		msg.setTipo("boot");
+		lista.add(msg);
+		return lista;
+	}
+	
+	public Dialogo sortearDialogo(List<Dialogo> lista) {
+		Random gerador = new Random();
+		int qtd = gerador.nextInt(50);
+		int t = lista.size() - 1;
+		int posicao = 0;
+		for(int i = 0;i < qtd;i++) {
+			if(i > t) {
+				posicao = 0;
+			}else {
+				posicao++;
+			}
+			
+		}
+		return lista.get(posicao);
+	}
+	
+	private String montarCondRes(List<Mensagem> usadas) {
+		String cond = "";
+		for(int i = 0;i < usadas.size();i++) {
+			if(i == usadas.size() - 1) { //ultimo
+				cond += "'" + usadas.get(i).getRes() + "'";
+			}else {
+				cond += "'" + usadas.get(i).getRes() + "', ";
+			}
+		}
+		return cond;
+	}
+
 	public Dialogo updateDialogo(Dialogo dialogo) throws Exception{
 		dialogo.setDataUtilizacao(new Date());
 		return dialogoRepository.save(dialogo);
@@ -359,10 +408,11 @@ public class MensagemService {
 		return perguntas;
 	}
 	
-	public Mensagem semResposta() throws Exception{
+	public Mensagem semResposta(Long id) throws Exception{
 		Mensagem msg = new Mensagem();
 		msg.setRes("Desculpe minha ignorancia, mas eu estou sem resposta!");
 		msg.setTipo("boot");
+		msg.setIdConversa(id);
 		return gravaMensagem(msg);
 	}
 	
@@ -371,7 +421,7 @@ public class MensagemService {
 			gravaMensagem(msg);
 		}
 		List<Mensagem> lista = new ArrayList<>();
-		lista.add(semResposta());
+		lista.add(semResposta(msg.getIdConversa()));
 		lista.add(novoDialogo(msg.getIdConversa()).get(0));
 		return lista;
 	}

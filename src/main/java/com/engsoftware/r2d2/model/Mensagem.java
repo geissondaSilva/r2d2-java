@@ -56,6 +56,19 @@ public class Mensagem implements Serializable{
 	@Column(length=30)
 	private String tipo;
 	
+	@Column(length=50)
+	private String name;
+	
+	public String getName() {
+		return name;
+	}
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataConversa;
 	
