@@ -117,55 +117,78 @@ public class MensagemService {
 	
 	public Mensagem filtrarPalavrao(String frase, Mensagem mensg){
 		List<DicionarioPalavrao> palavroes = new ArrayList<>();
+		List<String> listaPalavras = separarPalavra(frase);
+		String cond = "";
+		for(int i = 0;i < listaPalavras.size();i++) {
+			if(i == listaPalavras.size() - 1) {
+				cond += "'" + listaPalavras.get(i) + "'";
+				continue;
+			}
+			cond += "'" + listaPalavras.get(i) + "', ";
+		}
+		
 		try {
-			palavroes = dicionarioPalavraoRepository.findAll();
+			String sql = "select dp from DicionarioPalavrao dp where dp.deletado = false and dp.value in (" + cond + ")";
+			Query query = entity.createQuery(sql);
+			palavroes = query.getResultList();
 		}catch (Exception e) {
 			throw e;
 		}
 		
-		String[] lista;
-		frase = removeAcentos(frase);
-		frase = frase.toUpperCase();
-		lista = frase.split(" ");
-		List<String> nova = new ArrayList<>();
-		for(String a : lista) {
-			nova.add(a);
+		
+		if(palavroes == null) {
+			return null;
+		}else if(palavroes.size() == 0) {
+			return null;
 		}
 		
-		Integer quantidadePalavroes = 0;
+		Integer nivel = 0;
 		
-		for(String e : nova) {
-			for(DicionarioPalavrao p : palavroes) {
-				if(e.equals(p.getValue())) {
-					quantidadePalavroes++;
-				}
-			}
+		for(DicionarioPalavrao dp : palavroes) {
+			nivel += dp.getNivel();
 		}
 		
-		if(quantidadePalavroes > 0) {
-			//tirar porcentagem da quantidade de palavroes
-			Integer per = (quantidadePalavroes * 100) / nova.size();
-			String busca = "";
-			if(per < 25) {
-				busca = "besterento";
-			}else if(per < 50) {
-				busca = "piapancudo";
-			}else if(per < 75) {
-				busca = "filhadaputa";
-			}else {
-				busca = "hardmerda";
-			}
-			
-			Dialogo dialogo = dialogoRepository.buscarPorNameTipo(busca, "palavrao").get(0);
+		String busca = null;
+		
+		if(nivel < 5) {
+			busca = "leve";
+		}else if(nivel < 10) {
+			busca = "medio";
+		}else if(nivel < 15) {
+			busca = "maleducado";
+		}else if(nivel < 20) {
+			busca = "pesado";
+		}else if(nivel >= 20) {
+			busca = "pesadao";
+		}else {
+			return null;
+		}
+		
+		List<Dialogo> listaRes = dialogoRepository.buscarPorNameTipo(busca, "palavrao");
+		boolean existe = true;
+		
+		if(listaRes == null) {
+			existe = false;
+		}else if(listaRes.size() == 0) {
+			existe = false;
+		}
+		
+		if(!existe) {
 			Mensagem msg = new Mensagem();
 			msg.setDataConversa(new Date());
-			msg.setRes(dialogo.getMensagem());
+			msg.setRes("Me respeite!");
 			msg.setIdConversa(mensg.getIdConversa());
-
 			msg.setTipo("boot");
 			return msg;
 		}
-		return null;
+		
+		Dialogo dialogo = listaRes.get(0);
+		Mensagem msg = new Mensagem();
+		msg.setDataConversa(new Date());
+		msg.setRes(dialogo.getMensagem());
+		msg.setIdConversa(mensg.getIdConversa());
+		msg.setTipo("boot");
+		return msg;
 	}
 	
 	public Mensagem filtrarPergunta(Mensagem msg) throws Exception{
@@ -209,7 +232,7 @@ public class MensagemService {
 		List<Tags> tags = query.getResultList();
 		List<PerguntaTagsResult> lista = montarPerguntaResulta(tags);
 		for(PerguntaTagsResult p : lista) {
-			if(p.getQtdTags() == p.getTags().size()) {
+			if(p.getQtdTags() >= p.getTags().size()) {
 				Resposta resposta = respostaRepository.buscarPorPergunta(p.getId());
 				if(resposta == null) {
 					return semResposta(idConversa);
@@ -264,7 +287,8 @@ public class MensagemService {
 					Acoes acao = acaoRepository.getOne(fun.getIdAcao());
 					fun.setAcao(acao);
 				}
-				mensg.setRes(fun.getAcao().getValue());
+				mensg.setRes(fun.getAcao().getNome());
+				mensg.setName(fun.getAcao().getValue());
 				mensg.setTipo("acao");
 				return mensg;
 			}
