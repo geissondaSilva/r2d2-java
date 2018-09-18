@@ -231,6 +231,7 @@ public class MensagemService {
 		Query query = entity.createQuery(sql);
 		List<Tags> tags = query.getResultList();
 		List<PerguntaTagsResult> lista = montarPerguntaResulta(tags);
+		lista = ordenarPergunta(lista);
 		for(PerguntaTagsResult p : lista) {
 			if(p.getQtdTags() >= p.getTags().size()) {
 				Resposta resposta = respostaRepository.buscarPorPergunta(p.getId());
@@ -247,6 +248,23 @@ public class MensagemService {
 			}
 		}		
 		return semResposta(idConversa);
+	}
+	
+	public List<PerguntaTagsResult> ordenarPergunta(List<PerguntaTagsResult> lista) {
+		List<PerguntaTagsResult> nova = new ArrayList<>();
+		int tamanho = lista.size();
+		for(int a = 0;a < tamanho;a++) {
+			int maior = 0, p = 0;			
+			for(int j = 0;j < lista.size();j++) {
+				if(lista.get(j).getTags().size() >= maior) {
+					p = j;
+					maior = lista.get(j).getTags().size();
+				}
+			}
+			nova.add(lista.get(p));
+			lista.remove(p);
+		}
+		return nova;
 	}
 	
 	public List<String> separarPalavra(String frase){
