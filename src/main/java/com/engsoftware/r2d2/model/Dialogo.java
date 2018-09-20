@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,6 +38,19 @@ public class Dialogo implements Serializable{
 	private String name;
 	
 	private Integer sequence;
+	
+	@Column(length=50)
+	private String respostaAfirmacao;
+	
+	@Column(length=50)
+	private String respostaNegacao;
+	
+	@JoinColumn(name="idpergunta", referencedColumnName="id", insertable=false, updatable=false)
+	@ManyToOne(fetch=FetchType.EAGER)
+	private Pergunta pergunta;
+	
+	@Column(name="idpergunta")
+	private Long idPergunta;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataUtilizacao;

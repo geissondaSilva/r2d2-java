@@ -59,6 +59,21 @@ public class Mensagem implements Serializable{
 	@Column(length=50)
 	private String name;
 	
+	@Transient
+	private Long idDialogo;
+	
+	public Long getIdDialogo() {
+		return idDialogo;
+	}
+
+
+
+	public void setIdDialogo(Long idDialogo) {
+		this.idDialogo = idDialogo;
+	}
+
+
+
 	public String getName() {
 		return name;
 	}

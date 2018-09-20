@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.engsoftware.r2d2.model.Acoes;
 import com.engsoftware.r2d2.model.Dialogo;
+import com.engsoftware.r2d2.model.Dicionario;
 import com.engsoftware.r2d2.model.DicionarioPalavrao;
 import com.engsoftware.r2d2.model.DicionarioPergunta;
 import com.engsoftware.r2d2.model.Mensagem;
@@ -372,6 +373,9 @@ public class MensagemService {
 		msg.setRes(dialogo.getMensagem());
 		msg.setTipo("boot");
 		msg.setName("novodialogo");
+		if(dialogo.getName().equals("pergunta")) {
+			msg.setIdDialogo(dialogo.getId());
+		}
 		msgs.add(msg);
 		return gravaMensagens(msgs);
 	}
@@ -413,6 +417,19 @@ public class MensagemService {
 			}
 		}
 		return cond;
+	}
+	
+	private String montarCondRes(String frase) {
+		List<String> palavras = separarPalavra(frase);
+		StringBuilder cond = new StringBuilder();
+		for(int i = 0;i < palavras.size();i++) {
+			if(i == palavras.size()) {
+				cond.append("'" + palavras.get(i) + "'");
+			}else {
+				cond.append("'" + palavras.get(i) + "', ");
+			}
+		}
+		return cond.toString();
 	}
 
 	public Dialogo updateDialogo(Dialogo dialogo) throws Exception{
@@ -475,5 +492,37 @@ public class MensagemService {
 		msg.setTipo("boot");
 		lista.add(msg);
 		return lista;
+	}
+	
+	public Boolean ValidarResposta(Long idDialogo, Mensagem msg) throws Exception{
+		String cond = montarCondRes(msg.getRes());
+		String sql = "select d from Dicionario where (d.idDialogo = :id or name = 'geral') and d.value in (" + cond + ")";
+		Query query = entity.createQuery(sql);
+		query.setParameter("id", idDialogo);
+		List<Dicionario> lista = query.getResultList();
+		
+		if(lista == null) {
+			return null;
+		}else if(lista.size() == 0) {
+			return null;
+		}
+		
+		int qtdNeg = 0, qtdAfirm = 0;
+		
+		for(Dicionario dic : lista) {
+			if(dic.getTipo().equals("negacao")) {
+				qtdNeg++;
+			}else if(dic.getTipo().equals("afirmacao")) {
+				qtdAfirm++;
+			}
+		}
+		
+		if(qtdNeg < qtdAfirm) {
+			return true;
+		}else if(qtdNeg == qtdAfirm) {
+			return null;
+		}
+		
+		return false;
 	}
 }
