@@ -4,6 +4,7 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import javax.persistence.EntityManager;
@@ -25,6 +26,7 @@ import com.engsoftware.r2d2.repository.AcaoRepository;
 import com.engsoftware.r2d2.repository.DialogoRepository;
 import com.engsoftware.r2d2.repository.DicionarioPalaraoRepository;
 import com.engsoftware.r2d2.repository.DicionarioPerguntaRepository;
+import com.engsoftware.r2d2.repository.DicionarioRepository;
 import com.engsoftware.r2d2.repository.MensagemRepostory;
 import com.engsoftware.r2d2.repository.PerguntaRepository;
 import com.engsoftware.r2d2.repository.RespostaRepository;
@@ -59,6 +61,9 @@ public class MensagemService {
 	@Autowired
 	AcaoRepository acaoRepository;
 	
+	@Autowired
+	DicionarioRepository dicionarioRepository;
+	
 	@PersistenceContext
 	private EntityManager entity;
 	
@@ -89,12 +94,27 @@ public class MensagemService {
 			if(idPergunta == 0) {
 				return naoEntendeu(mensagem);
 			}
-			return novoDialogo(mensagem.getIdConversa());
+			
+			if(mensagem.getIdDialogo() == null) {				
+				return novoDialogo(mensagem.getIdConversa());
+			}else {
+				List<Mensagem> respostas =  encontrarResposta(mensagem);
+				if(respostas.size() < 2) {
+					if(respostas.get(0).getName().equals("filha")) {
+						return respostas;
+					}
+					List<Mensagem> novoD = novoDialogo(mensagem.getIdConversa());
+					for(Mensagem m : novoD) {
+						respostas.add(m);
+					}
+				}
+				return respostas;
+			}
 		}
 		
 		return naoEntendeu(mensagem);
 	}
-	
+
 	public List<Mensagem> gravaMensagens(List<Mensagem> msgs) throws Exception {
 		for(Mensagem msg : msgs) {			
 			msg = mensagemRepository.save(msg);
@@ -180,6 +200,7 @@ public class MensagemService {
 			msg.setRes("Me respeite!");
 			msg.setIdConversa(mensg.getIdConversa());
 			msg.setTipo("boot");
+			msg.setName("palavrao");
 			return msg;
 		}
 		
@@ -423,7 +444,7 @@ public class MensagemService {
 		List<String> palavras = separarPalavra(frase);
 		StringBuilder cond = new StringBuilder();
 		for(int i = 0;i < palavras.size();i++) {
-			if(i == palavras.size()) {
+			if(i == palavras.size() - 1) {
 				cond.append("'" + palavras.get(i) + "'");
 			}else {
 				cond.append("'" + palavras.get(i) + "', ");
@@ -494,17 +515,17 @@ public class MensagemService {
 		return lista;
 	}
 	
-	public Boolean ValidarResposta(Long idDialogo, Mensagem msg) throws Exception{
+	public Boolean validarResposta(Long idDialogo, Mensagem msg) throws Exception{
 		String cond = montarCondRes(msg.getRes());
-		String sql = "select d from Dicionario where (d.idDialogo = :id or name = 'geral') and d.value in (" + cond + ")";
+		String sql = "select d from Dicionario d where (d.idDialogo = :id or name = 'geral') and d.value in (" + cond + ")";
 		Query query = entity.createQuery(sql);
 		query.setParameter("id", idDialogo);
 		List<Dicionario> lista = query.getResultList();
 		
 		if(lista == null) {
-			return null;
+			return true;
 		}else if(lista.size() == 0) {
-			return null;
+			return true;
 		}
 		
 		int qtdNeg = 0, qtdAfirm = 0;
@@ -524,5 +545,109 @@ public class MensagemService {
 		}
 		
 		return false;
+	}
+	
+	private List<Mensagem> encontrarResposta(Mensagem mensagem) throws Exception{
+		Optional<Dialogo> dialogo = dialogoRepository.findById(mensagem.getIdDialogo());
+		Dialogo dialog = dialogo.get();
+		Boolean afirmacao = validarResposta(dialog.getId(), mensagem);
+		
+		Mensagem msg = new Mensagem();
+		if(afirmacao) {
+			//afirmacao
+			if(dialog.getFilha() == null) {
+				if(dialog.getRespostaAfirmacao() == null) {
+					return buscarRepostaGeral(mensagem, "respostaafirmacao");
+				}else {
+					//busca uma resposta para afirmação geral
+					msg.setRes(dialog.getRespostaAfirmacao());
+					msg.setName("resposta");
+					msg.setTipo("boot");
+					msg.setIdConversa(mensagem.getIdConversa());
+					return retornarMensagem(msg);
+				}
+			}else {
+				//buscar a resposta
+				Optional<Dialogo> d = dialogoRepository.findById(dialog.getFilha());
+				msg.setRes(d.get().getMensagem());
+				msg.setTipo("boot");
+				msg.setName("filha");
+				msg.setIdConversa(mensagem.getIdConversa());
+				msg.setIdDialogo(d.get().getId());
+				return retornarMensagem(msg);
+			}
+		}else {
+			//negacao
+			if(dialog.getRespostaNegacao() == null) {
+				//busca uma negação geral
+				return buscarRepostaGeral(mensagem, "respostanegacao");
+			}else {
+				//retorna a negacao
+				msg.setIdConversa(mensagem.getIdConversa());
+				msg.setRes(dialog.getRespostaNegacao());
+				msg.setTipo("boot");
+				msg.setName("subresposta");
+				return retornarMensagem(msg);
+			}
+		}
+	}
+	
+	public List<Mensagem> buscarRepostaGeral(Mensagem msg, String tipo) throws Exception{
+		List<Dicionario> listaDicionario = dicionarioRepository.buscarPorTipo(tipo);
+		if(listaDicionario == null) {
+			return respostaStatica(msg.getIdConversa());
+		}else if(listaDicionario.size() == 0) {
+			return respostaStatica(msg.getIdConversa());
+		}else if(listaDicionario.size() == 1) {
+			return gerarMensagemToDicionario(listaDicionario.get(0), msg.getIdConversa());
+		}else {
+			Dicionario dicionario = sortearDicionario(listaDicionario);
+			return gerarMensagemToDicionario(dicionario, msg.getIdConversa());
+		}
+	}
+
+	public List<Mensagem> retornarMensagem(Mensagem msg) throws Exception{
+		msg = gravaMensagem(msg);
+		List<Mensagem> lista = new ArrayList<>();
+		lista.add(msg);
+		return lista;
+	}
+	
+	public Dicionario sortearDicionario(List<Dicionario> lista) {
+		Random gerador = new Random();
+		int qtd = gerador.nextInt(50);
+		int pos = 0;
+		for(int a = 0;a < qtd;a++) {
+			pos++;
+			if(pos > lista.size()) {
+				pos = 0;
+			}
+		}
+		return lista.get(0);
+	}
+	
+	public List<Mensagem> respostaStatica(Long idConversa) throws Exception{
+		List<Mensagem> lista = new ArrayList<>();
+		Mensagem msg = new Mensagem();
+		msg.setIdConversa(idConversa);
+		msg.setRes("Hum ok!");
+		msg.setTipo("boot");
+		msg.setName("subresposta");
+		msg = gravaMensagem(msg);
+		List<Mensagem> dialogs = novoDialogo(idConversa);
+		lista.add(msg);
+		for(Mensagem m : dialogs) {
+			lista.add(m);
+		}
+		return lista;
+	}
+	
+	public List<Mensagem> gerarMensagemToDicionario(Dicionario dic, Long idConversa) throws Exception{
+		Mensagem msg = new Mensagem();
+		msg.setRes(dic.getValue());
+		msg.setTipo("tipo");
+		msg.setName("resposta");
+		msg.setIdConversa(idConversa);
+		return retornarMensagem(msg);
 	}
 }

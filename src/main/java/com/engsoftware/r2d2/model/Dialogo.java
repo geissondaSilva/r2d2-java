@@ -45,16 +45,30 @@ public class Dialogo implements Serializable{
 	@Column(length=50)
 	private String respostaNegacao;
 	
-	@JoinColumn(name="idpergunta", referencedColumnName="id", insertable=false, updatable=false)
 	@ManyToOne(fetch=FetchType.EAGER)
-	private Pergunta pergunta;
+	@JoinColumn(name="idresposta", referencedColumnName="id", insertable=false, updatable=false)
+	private Resposta resposta;
 	
-	@Column(name="idpergunta")
-	private Long idPergunta;
+	@Column(name="idresposta")
+	private Long idResposta;
+	
+	private Long filha;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataUtilizacao;
 	
+	public String getRespostaAfirmacao() {
+		return respostaAfirmacao;
+	}
+	public void setRespostaAfirmacao(String respostaAfirmacao) {
+		this.respostaAfirmacao = respostaAfirmacao;
+	}
+	public String getRespostaNegacao() {
+		return respostaNegacao;
+	}
+	public void setRespostaNegacao(String respostaNegacao) {
+		this.respostaNegacao = respostaNegacao;
+	}
 	public Date getDataUtilizacao() {
 		return dataUtilizacao;
 	}
@@ -90,6 +104,24 @@ public class Dialogo implements Serializable{
 	}
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+	public Resposta getResposta() {
+		return resposta;
+	}
+	public void setResposta(Resposta resposta) {
+		this.resposta = resposta;
+	}
+	public Long getIdResposta() {
+		return idResposta;
+	}
+	public void setIdResposta(Long idResposta) {
+		this.idResposta = idResposta;
+	}
+	public Long getFilha() {
+		return filha;
+	}
+	public void setFilha(Long filha) {
+		this.filha = filha;
 	}
 	
 }

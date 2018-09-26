@@ -50,6 +50,9 @@ public class Resposta implements Serializable{
 	@Column
 	private Integer sequence;
 	
+	@Column(length=30)
+	private String tipo;
+	
 	
 	public Long getId() {
 		return id;
@@ -118,6 +121,16 @@ public class Resposta implements Serializable{
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+
+	public String getTipo() {
+		return tipo;
+	}
+
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 
