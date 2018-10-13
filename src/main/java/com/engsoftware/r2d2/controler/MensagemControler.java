@@ -2,9 +2,8 @@ package com.engsoftware.r2d2.controler;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +21,7 @@ public class MensagemControler {
 	private MensagemService mensagemService;
 	
 	@PostMapping("novamensagem")
+	@Transactional
 	public List<Mensagem> novaMensagem(@RequestBody Mensagem msg, @RequestParam("idpergunta") Long idPergunta){
 		try {
 			return mensagemService.novaMensagem(msg, idPergunta);

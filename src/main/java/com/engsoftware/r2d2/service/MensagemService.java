@@ -318,9 +318,10 @@ public class MensagemService {
 		List<Tags> tags = query.getResultList();
 		
 		List<FuncionalidadeTagResult> lista = montarFuncionalidadeResult(tags);
+		lista = ordenarResult(lista);
 		
 		for(FuncionalidadeTagResult fun : lista) {
-			if(fun.getQtdTags() == fun.getTags().size()) {
+			if(fun.getQtdTags() >= fun.getTags().size()) {
 				Mensagem mensg = new Mensagem();
 				mensg.setIdConversa(msg.getIdConversa());
 				if(fun.getAcao() == null) {
@@ -342,7 +343,7 @@ public class MensagemService {
 		for(Tags t : tags) {
 			Boolean existe = false;
 			for(FuncionalidadeTagResult fun : lista) {
-				if(fun.getId() == t.getIdFuncionalidade()) {
+				if(fun.getId().equals(t.getIdFuncionalidade())) {
 					List<Tags> list = fun.getTags();
 					list.add(t);
 					fun.setTags(list);
@@ -368,7 +369,6 @@ public class MensagemService {
 	public String removeAcentos(String a) {
 	    return Normalizer.normalize(a, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
-	
 	
 	public List<Mensagem> novoDialogo(Long idConversa) throws Exception{
 		List<Dialogo> lista = new ArrayList<>();
@@ -649,5 +649,28 @@ public class MensagemService {
 		msg.setName("resposta");
 		msg.setIdConversa(idConversa);
 		return retornarMensagem(msg);
+	}
+	
+	public List<FuncionalidadeTagResult> ordenarResult(List<FuncionalidadeTagResult> funcionalidades) {
+		List<FuncionalidadeTagResult> lista = new ArrayList<>();
+		boolean validando = true;
+		while(validando) {
+			FuncionalidadeTagResult funcionalidade = new FuncionalidadeTagResult();
+			int maior = 0;
+			for(FuncionalidadeTagResult fun : funcionalidades) {
+				if(fun.getTags().size() > maior) {
+					funcionalidade = fun;
+					maior = fun.getTags().size();
+				}
+			}
+			
+			if(maior == 0) {
+				validando = false;
+			} else {
+				funcionalidades.remove(funcionalidade);
+				lista.add(funcionalidade);
+			}
+		}
+		return lista;
 	}
 }
