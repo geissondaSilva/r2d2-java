@@ -255,7 +255,7 @@ public class MensagemService {
 		List<PerguntaTagsResult> lista = montarPerguntaResulta(tags);
 		lista = ordenarPergunta(lista);
 		for(PerguntaTagsResult p : lista) {
-			if(p.getQtdTags() >= p.getTags().size()) {
+			if(p.getTags().size() >= p.getQtdTags()) {
 				Resposta resposta = respostaRepository.buscarPorPergunta(p.getId());
 				if(resposta == null) {
 					return semResposta(idConversa);
@@ -464,7 +464,7 @@ public class MensagemService {
 			//verificar se a pergunta ja foi adicionada
 			boolean add = false;
 			for(PerguntaTagsResult p : perguntas) {
-				if(p.getId() == tag.getIdPergunta()) {
+				if(p.getId().equals(tag.getIdPergunta())) {
 					List<Tags> lista = p.getTags();
 					lista.add(tag);
 					p.setTags(lista);

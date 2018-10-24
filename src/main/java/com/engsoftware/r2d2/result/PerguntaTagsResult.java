@@ -57,5 +57,10 @@ public class PerguntaTagsResult {
 		this.tipo = tipo;
 	}
 	
+	@Override
+	public String toString() {
+		return "PerguntaTagsResult [id=" + id + ", tags=" + tags + ", qtdTags=" + qtdTags + ", pergunta=" + pergunta
+				+ ", sequence=" + sequence + ", assunto=" + assunto + ", tipo=" + tipo + "]";
+	}
 	
 }

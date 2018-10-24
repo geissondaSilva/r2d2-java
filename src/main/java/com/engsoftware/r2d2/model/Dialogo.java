@@ -2,6 +2,7 @@ package com.engsoftware.r2d2.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,9 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="dialogo")
@@ -57,6 +60,15 @@ public class Dialogo implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataUtilizacao;
 	
+	@Transient
+	private List<Dicionario> dicionario;
+	
+	public List<Dicionario> getDicionario() {
+		return dicionario;
+	}
+	public void setDicionario(List<Dicionario> dicionario) {
+		this.dicionario = dicionario;
+	}
 	public String getRespostaAfirmacao() {
 		return respostaAfirmacao;
 	}
@@ -122,6 +134,11 @@ public class Dialogo implements Serializable{
 	}
 	public void setFilha(Long filha) {
 		this.filha = filha;
+	}
+	
+	@PrePersist
+	public void prePersist() {
+		this.dataUtilizacao = new Date();
 	}
 	
 }

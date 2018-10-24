@@ -8,23 +8,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.engsoftware.r2d2.result.PerguntaResult;
-import com.engsoftware.r2d2.service.PerguntaService;
+import com.engsoftware.r2d2.model.Dialogo;
+import com.engsoftware.r2d2.service.DialogoService;
+
 
 @RestController
-@RequestMapping("api/r2d2/pergunta")
-public class PerguntaControler {
+@RequestMapping("api/r2d2/dialogo")
+public class DialogoControler {
 	
 	@Autowired
-	PerguntaService perguntaService;
+	DialogoService dialogoService;
 	
-	@PostMapping
-	public ResponseEntity<PerguntaResult> salvar(@RequestBody() PerguntaResult pergunta){
+	@PostMapping("novodialogo")
+	public ResponseEntity<Dialogo> salvarNovoDialogo(@RequestBody() Dialogo dialogo){
 		try {
-			pergunta = perguntaService.salvar(pergunta);
-			return ResponseEntity.ok(pergunta);
+			dialogo = dialogoService.salvarNovoDialogo(dialogo);
+			return ResponseEntity.ok(dialogo);
 		}catch (Exception e) {
-			return new ResponseEntity<PerguntaResult>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Dialogo>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
